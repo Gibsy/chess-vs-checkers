@@ -275,7 +275,7 @@ function botMove(){
     }
   } 
   else {
-    console.log("Difficulty: HARD (Best move evaluation)");
+    console.log("Difficulty: HARD (Best move)");
     pick = getBestMove(all);
   }
 
