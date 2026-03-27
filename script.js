@@ -226,6 +226,25 @@ function checkWin(){
   return false;
 }
 
+function getBestMove(moves) {
+  const scored = moves.map(m => { 
+    let s = 0; 
+    const t = G.board[m.r][m.c] || (m.cap ? G.board[m.cap.r][m.cap.c] : null); 
+    if(t) {
+      if (t.g === CHESS) {
+        s += t.t==='Q'? 9 : t.t==='R'? 5 : t.t==='B'||t.t==='N'? 3 : 1;
+      } else {
+        s += t.k ? 3 : 1;
+      }
+    }
+    return {...m, score: s}; 
+  });
+  scored.sort((a, b) => b.score - a.score);
+  
+  const top = scored.slice(0, Math.min(3, scored.length));
+  return top[Math.floor(Math.random() * top.length)];
+}
+
 function botMove(){
   if(G.gameOver) return;
   let all=[];
