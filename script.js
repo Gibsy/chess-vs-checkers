@@ -233,22 +233,32 @@ function botMove(){
     const p=G.board[r][c]; 
     if(p&&p.c===G.turn&&p.g===G.botGame) getMovesFor(r,c,G.board).forEach(m=>all.push({fr:r,fc:c,...m})); 
   }
-  const caps=all.filter(m=>m.cap); if(caps.length>0) all=caps;
+  
+  const caps=all.filter(m=>m.cap); 
+  if(caps.length>0) all=caps;
+  
   if(!all.length){ G.gameOver=true; render(); return; }
   
-  const diff=document.getElementById('diff').value;
+  const diff = document.getElementById('diff').value;
   let pick;
-  if(diff==='1'){ pick=all[Math.floor(Math.random()*all.length)]; }
+  if (diff === '1') {
+    console.log("Difficulty: EASY (Random move)");
+    pick = all[Math.floor(Math.random() * all.length)];
+  } 
+  else if (diff === '2') {
+    const beSmart = Math.random() > 0.5;
+    if (beSmart) {
+      console.log("Difficulty: NORMAL (SMART)");
+      pick = getBestMove(all);
+    } else {
+      console.log("Difficulty: NORMAL (RANDOM");
+      pick = all[Math.floor(Math.random() * all.length)];
+    }
+  } 
   else {
-    const scored=all.map(m=>{ 
-      let s=0; 
-      const t=G.board[m.r][m.c]||(m.cap?G.board[m.cap.r][m.cap.c]:null); 
-      if(t) s+=t.t==='Q'?9:t.t==='R'?5:t.t==='B'||t.t==='N'?3:1; 
-      return {...m,score:s}; 
-    });
-    scored.sort((a,b)=>b.score-a.score);
-    const top = scored.slice(0,Math.min(3,scored.length));
-    pick=top[Math.floor(Math.random()*top.length)];
+    console.log("Difficulty: HARD (Best move evaluation)");
+    pick = getBestMove(all);
   }
-  execMove(pick.fr,pick.fc,pick.r,pick.c,pick.cap);
+
+  execMove(pick.fr, pick.fc, pick.r, pick.c, pick.cap);
 }
